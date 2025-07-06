@@ -4,7 +4,7 @@ import { useConvexAuth } from 'convex/react'
 
 import { redirect } from 'next/navigation';
 import React from 'react'
-import Navigation from '../../_components/Navigation';
+import Navigation from './_components/Navigation';
 
 const layout = ({ children }: { children: React.ReactNode }) => {
 
