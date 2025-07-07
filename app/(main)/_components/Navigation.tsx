@@ -1,16 +1,22 @@
 "use client";
 import { cn } from '@/lib/utils';
-import { ChevronsLeft, MenuIcon } from 'lucide-react';
+import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from 'lucide-react';
 import { tree } from 'next/dist/build/templates/app-page';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react'
 import { ElementRef } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 import UserItem from './UserItem';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import Item from './item';
+import { toast } from 'sonner';
+import { DocumentList } from './DocumentList';
 
 const Navigation = () => {
     const pathname = usePathname();
     const isMobile = useMediaQuery("(max-width: 768px)");
+    const create = useMutation(api.documents.create);
 
     const isResizingRef = useRef(false);
     const sidebarRef = useRef<ElementRef<"aside">>(null);
@@ -85,6 +91,15 @@ const Navigation = () => {
         }
     }
 
+    const handleCreate = () => {
+        const promise = create({ title: "Untitled" });
+
+        toast.promise(promise, {
+            loading: 'creating new note...',
+            success: 'note created successfully!',
+            error: 'failed to create note'
+        });
+    }
 
     return (
         <>
@@ -93,12 +108,19 @@ const Navigation = () => {
                     <ChevronsLeft className='h-6 w-6' />
                 </div>
                 <div>
-                    <UserItem/>
+                    <UserItem />
+                    <Item label='Search' icon={Search} isSearch onClick={() => { }} />
+                    <Item label='Settings' icon={Settings} onClick={() => { }} />
+                    <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
+
                 </div>
-                
+
                 <div className='mt-4'>
-                    <p>Documents</p>
+                    <DocumentList />
                 </div>
+                {/* <div>
+                    <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
+                </div> */}
                 <div onMouseDown={handleMouseDown} onClick={resetWidth} className='opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0 ' />
             </aside>
             <div ref={navbarRef} className={cn("absolute top-0 z-[99999] left-60 w-[calc(100%-240px)]", isResetting && "transition-all ease-in-out duration-300", isMobile && "left-0 w-full")}>
