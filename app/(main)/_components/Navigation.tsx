@@ -1,6 +1,6 @@
 "use client";
 import { cn } from '@/lib/utils';
-import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from 'lucide-react';
+import { ChevronsLeft, MenuIcon, Plus, PlusCircle, Search, Settings, Trash } from 'lucide-react';
 import { tree } from 'next/dist/build/templates/app-page';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react'
@@ -12,6 +12,8 @@ import { api } from '@/convex/_generated/api';
 import Item from './item';
 import { toast } from 'sonner';
 import { DocumentList } from './DocumentList';
+import { Popover, PopoverTrigger } from '@/components/ui/popover';
+import { PopoverContent } from '@radix-ui/react-popover';
 
 const Navigation = () => {
     const pathname = usePathname();
@@ -117,10 +119,16 @@ const Navigation = () => {
 
                 <div className='mt-4'>
                     <DocumentList />
+                    <Item onClick={handleCreate} icon={Plus} label='Add a page' />
+                    <Popover>
+                        <PopoverTrigger className='w-full mt-4'>
+                            <Item label='Trash' icon={Trash} />
+                        </PopoverTrigger>
+                        <PopoverContent className='p-0 w-72' side={isMobile ? "bottom" : "right"}>
+                            {/* <TrashBox/> */}
+                        </PopoverContent>
+                    </Popover>
                 </div>
-                {/* <div>
-                    <Item onClick={handleCreate} label="New page" icon={PlusCircle} />
-                </div> */}
                 <div onMouseDown={handleMouseDown} onClick={resetWidth} className='opacity-0 group-hover/sidebar:opacity-100 transition cursor-ew-resize absolute h-full w-1 bg-primary/10 right-0 top-0 ' />
             </aside>
             <div ref={navbarRef} className={cn("absolute top-0 z-[99999] left-60 w-[calc(100%-240px)]", isResetting && "transition-all ease-in-out duration-300", isMobile && "left-0 w-full")}>
