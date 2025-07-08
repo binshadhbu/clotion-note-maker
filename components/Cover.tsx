@@ -10,6 +10,7 @@ import { api } from '@/convex/_generated/api';
 import { useParams } from 'next/navigation';
 import { Id } from '@/convex/_generated/dataModel';
 import { useEdgeStore } from '@/lib/edgestore';
+import { Skeleton } from './ui/skeleton';
 
 interface CoverProps {
     url?: string;
@@ -41,7 +42,7 @@ const Cover = ({ url, preview }: CoverProps) => {
 
             {url && !preview && (
                 <div className='bottom-5 flex items-center gap-x-2 opacity-0 group-hover:opacity-100 absolute'>
-                    <Button onClick={()=>coverImage.onReplace(url)} className='text-muted-foreground text-xs' variant='outline' size='sm'>
+                    <Button onClick={() => coverImage.onReplace(url)} className='text-muted-foreground text-xs' variant='outline' size='sm'>
                         <ImageIcon className='h-4 w-4 mr-2' />
                         Change cover
                     </Button>
@@ -53,6 +54,12 @@ const Cover = ({ url, preview }: CoverProps) => {
             )}
 
         </div>
+    )
+}
+
+Cover.Skeleton = function CoverSkeleton() {
+    return (
+        <Skeleton className='w-full h-[12bh]' />
     )
 }
 

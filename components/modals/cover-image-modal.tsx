@@ -45,7 +45,6 @@ export function CoverImageModal() {
         id: params.documentId as Id<'documents'>,
         coverImage: res.url,
       })
-
       onClose()
     }
   }
