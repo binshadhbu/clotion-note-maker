@@ -213,15 +213,50 @@ export const getById = query({
 
 
 
-export const update=mutation({
-    args:{
-        id:v.id("documents"),
-        title:v.string(),
-        content: v.optional(v.string()),
-        icon: v.optional(v.string()),
-        isPublished: v.optional(v.boolean()),
-    },
+export const update = mutation({
+  args:{
+    id:v.id('documents'),
+    title:v.optional(v.string()),
+    content:v.optional(v.string()),
+    coverImage:v.optional(v.string()),
+    icon:v.optional(v.string()),
+    isPublished:v.optional(v.boolean())
+  },
+  handler:async (context,args) => {
+    const identity = await context.auth.getUserIdentity()
+
+    if (!identity) {
+      throw new Error("Unauthenticated")
+    }
+
+    const userId = identity.subject
+
+    const {id,...rest} = args
+
+    const existingDocument = await context.db.get(args.id)
+
+    if (!existingDocument) {
+      throw new Error("Not found")
+    }
+
+    if (existingDocument.userId !== userId) {
+      throw new Error('Unauthorized')
+    }
+
+    const document = await context.db.patch(args.id,{
+      ...rest
+    })
+
+    return document
+  }
+})
+
+
+
+export const removeIcon=mutation({
+    args:{id:v.id("documents")},
     handler:async (ctx,args)=>{
+
         const identity= await ctx.auth.getUserIdentity();
         if(!identity){
             throw new Error("not authenticated");
@@ -229,16 +264,38 @@ export const update=mutation({
 
         const userId=identity.subject;
 
-        const {id,...rest}= args;
-        const existingDocument= await ctx.db.get(id);
+        const existingDocument= await ctx.db.get(args.id);
         if(!existingDocument){
             throw new Error("document not found");
         }
         if(existingDocument.userId!==userId){
-            throw new Error("not authorized to update this document");
+            throw new Error("not authorized to remove icon from this document");
         }
 
-        const document= await ctx.db.patch(id, {...rest});
+        const document= await ctx.db.patch(args.id, {icon:undefined});
+        return document;
+    }
+})
+
+export const removeCoverImage=mutation({
+    args:{id:v.id("documents")},
+    handler:async(ctx,args)=>{
+        const identity= await ctx.auth.getUserIdentity();
+        if(!identity){
+            throw new Error("not authenticated");
+        }
+
+        const userId=identity.subject;
+
+        const existingDocument= await ctx.db.get(args.id);
+        if(!existingDocument){
+            throw new Error("document not found");
+        }
+        if(existingDocument.userId!==userId){
+            throw new Error("not authorized to remove cover image from this document");
+        }
+
+        const document= await ctx.db.patch(args.id, {coverImage:undefined});
         return document;
     }
 })
