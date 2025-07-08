@@ -70,28 +70,38 @@ const TrashBox = () => {
     }
 
     return (
-        <div className='text-sm  border'>
-            <div className='flex items-center gap-x-1 p-2 '>
-                <Search className='h-4 w-4 ' />
-                <Input value={search} onChange={(e) => setSearch(e.target.value)} className='h-7 px-2 focus-visible:ring-transparent bg-secondary' placeholder='filter by page title...' />
+        <div className="text-sm">
+            <div className="flex items-center gap-x-1 p-2">
+                <Search className="w-4 h-4" />
+                <Input className="h-7 px-2 focus-visible:ring-transparent bg-secondary"
+                    value={search} onChange={e => setSearch(e.target.value)}
+                    placeholder="Filter by page title..." />
             </div>
-            <div className='mt-2 px-1 pb-1'>
-                <p className='hidden last:block text-xs text-center text-muted-foreground pb-2'>No documents found</p>
-                {filteredDocuments?.map((document) => (
-                    <div key={document._id} role='button' onClick={() => onClick(document._id)} className='text-sm rounded-sm w-full hover:bg-primary/5 flex items-center text-primary justify-between '>
-                        <span>{document.title}</span>
-                        <div className='flex items-center'>
-                            <button onClick={(e) => onRestore(e, document._id)} className='rounded-sm p-2 hover:bg-neutral-200'>
-                                <Undo className='h-4 w-4 text-muted-foreground' />
+            <div className="mt-2 px-1 pb-1">
+                <p className="hidden last:block text-xs text-center text-muted-foreground pb-2">
+                    No documents found
+                </p>
+                {filteredDocuments?.map(document => (
+                    <div className="text-sm rounded-sm w-full hover:bg-primary/5 flex justify-between items-center text-primary"
+                        key={document._id} role="button" onClick={() => onClick(document._id)}
+                    >
+                        <span className="truncate pl-2">
+                            {document.title}
+                        </span>
+                        <div className="flex items-center">
+                            <button className="rounded-sm p-2 hover:bg-neutral-20 dark:hover:bg-neutral-600" onClick={e => onRestore(e, document._id)}>
+                                <Undo className="w-4 h-4 text-muted-foreground" />
                             </button>
+                            <ConfirmModal onConfirm={() => onRemove(document._id)}>
+                                <div className="rounded-sm p-2 hover:bg-neutral-200
+                dark:hover:bg-neutral-600" role="button">
+                                    <Trash className="w-4 h-4 text-muted-foreground" />
+                                </div>
+                            </ConfirmModal>
                         </div>
-                        <ConfirmModal onConfirm={()=> onRemove(document._id)}>
-                            <div role='button' className='rounded-sm p-2 hover:bg-neutral-200'><Trash className='h-4 w-4 text-muted-foreground' /></div>
-                        </ConfirmModal>
                     </div>
                 ))}
             </div>
-
         </div>
     )
 }
